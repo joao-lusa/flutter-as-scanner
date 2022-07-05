@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -17,34 +18,38 @@ class ScanHistoryState extends State<ScanHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: FutureBuilder<List<Scans>>(
-              future: DatabaseHelper.instance.getScans(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<Scans>> snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: Text('Loading...'));
-                }
-                return snapshot.data!.isEmpty
-                    ? const Center(child: Text('No scanned codes in List.'))
-                    :ListView(
-                  children: snapshot.data!.map((scans) {
-                    return Center(
-                      child: ListTile(
-                        title: Text(scans.content),
-                        trailing: ElevatedButton.icon(
-                          onPressed: (){
-                            setState(() {
-                                DatabaseHelper.instance.remove(scans.id!);
-                              });
-                          },
-                          icon: const Icon(Icons.delete_forever), 
-                          label: const Text(""),
-                        )
-                      ),
+        child: FutureBuilder<List<Scans>>(
+            future: DatabaseHelper.instance.getScans(),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Scans>> snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: Text('Loading...'));
+              }
+              return snapshot.data!.isEmpty
+                  ? const Center(child: Text('No scanned codes in List.'))
+                  : ListView(
+                      children: snapshot.data!.map((scans) {
+                        return Center(
+                          child: ListTile(
+                              title: Text(scans.content),
+                              trailing: ElevatedButton.icon(
+                                onPressed: () async {
+                                  setState(() {
+                                    DatabaseHelper.instance.remove(scans.id!);
+                                  });
+                                  await Flushbar(
+                                    title: 'Excluir',
+                                    message: 'item removido',
+                                    duration: Duration(seconds: 2),
+                                  ).show(context);
+                                },
+                                icon: const Icon(Icons.delete_forever),
+                                label: const Text(""),
+                              )),
+                        );
+                      }).toList(),
                     );
-                  }).toList(),
-                );
-              }),
+            }),
       ),
     );
   }

@@ -19,7 +19,8 @@ class App extends StatelessWidget {
         scaffoldBackgroundColor: Colors.grey[900],
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.black, backgroundColor: Colors.tealAccent,
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.tealAccent,
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 36),
             textStyle:
                 const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),

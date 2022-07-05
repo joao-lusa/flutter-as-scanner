@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:scanerbarcode/pages/history.dart';
@@ -13,25 +14,21 @@ class _ScannerBarState extends State<ScannerBar> {
   String ticket = '';
   List<String> tickets = [];
 
-  readQRCode() async {
-    Stream<dynamic>? reader = FlutterBarcodeScanner.getBarcodeStreamReceiver(
+  Future readQRCode() async {
+    String reader = await FlutterBarcodeScanner.scanBarcode(
       "#FFFFFF",
       "Cancelar",
       false,
       ScanMode.BARCODE,
     );
-    if (reader != null) {
-      reader.listen((code) {
-        setState((){
-          if (!tickets.contains(code.toString()) && code != '-1') {
-            tickets.add(code.toString());
-            DatabaseHelper.instance.add(
-              Scans(content: code),
-            );
-          }
-        });
-      });
-    }
+    setState(() async {
+      await Flushbar(
+        title: 'Adcionado',
+        message: 'item Adicionado',
+        duration: const Duration(seconds: 2),
+      ).show(context);
+    });
+    DatabaseHelper.instance.add(Scans(content: reader));
   }
 
   @override

@@ -37,6 +37,7 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   sqflite: ^2.0.2+1
   path_provider: ^2.0.11
+  another_flushbar: ^1.10.29
 
 dev_dependencies:
   flutter_test:
