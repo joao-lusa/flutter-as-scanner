@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+
 
 class ScannerBar extends StatefulWidget {
   const ScannerBar({Key? key}) : super(key: key);
@@ -10,6 +12,17 @@ class ScannerBar extends StatefulWidget {
 class _ScannerBarState extends State<ScannerBar> {
   String ticket = '';
   List<String> tickets = [];
+
+  readQRCode() async {
+    String code = await FlutterBarcodeScanner.scanBarcode(
+      "#FFFFFF",
+      "Cancelar",
+      false,
+      ScanMode.QR,
+    );
+    setState(() => ticket = code != '-1' ? code : 'Não validado');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +41,7 @@ class _ScannerBarState extends State<ScannerBar> {
                 ),
               ),
             ElevatedButton.icon(
-              onPressed: () => {},
+              onPressed: readQRCode,
               icon: const Icon(Icons.qr_code),
               label: const Text('Validar'),
             ),
