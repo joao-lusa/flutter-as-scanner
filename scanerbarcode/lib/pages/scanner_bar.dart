@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:scanerbarcode/pages/history.dart';
 
 class ScannerBar extends StatefulWidget {
   const ScannerBar({Key? key}) : super(key: key);
@@ -19,13 +20,18 @@ class _ScannerBarState extends State<ScannerBar> {
       false,
       ScanMode.BARCODE,
     );
-    if (reader != null)
+    if (reader != null) {
       reader.listen((code) {
-        setState(() {
-          if (!tickets.contains(code.toString()) && code != '-1')
+        setState((){
+          if (!tickets.contains(code.toString()) && code != '-1') {
             tickets.add(code.toString());
+            DatabaseHelper.instance.add(
+              Scans(content: code),
+            );
+          }
         });
       });
+    }
   }
 
   @override
@@ -49,6 +55,18 @@ class _ScannerBarState extends State<ScannerBar> {
               onPressed: readQRCode,
               icon: const Icon(Icons.qr_code),
               label: const Text('Validar'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return const ScanHistory();
+                  }),
+                );
+              },
+              icon: const Icon(Icons.qr_code),
+              label: const Text('Histórico'),
             ),
           ],
         ),

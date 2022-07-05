@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scanerbarcode/pages/scanner_bar.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const App());
 }
 
