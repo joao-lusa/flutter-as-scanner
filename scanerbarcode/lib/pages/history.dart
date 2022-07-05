@@ -31,6 +31,15 @@ class ScanHistoryState extends State<ScanHistory> {
                     return Center(
                       child: ListTile(
                         title: Text(scans.content),
+                        trailing: ElevatedButton.icon(
+                          onPressed: (){
+                            setState(() {
+                                DatabaseHelper.instance.remove(scans.id!);
+                              });
+                          },
+                          icon: const Icon(Icons.delete_forever), 
+                          label: const Text(""),
+                        )
                       ),
                     );
                   }).toList(),
@@ -100,4 +109,8 @@ class DatabaseHelper {
     return await db.insert('scans', scans.toMap());
   }
 
+  Future<int> remove(int id) async {
+    Database db = await instance.database;
+    return await db.delete('scans', where: 'id = ?', whereArgs: [id]);
+  }
 }
