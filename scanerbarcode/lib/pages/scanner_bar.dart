@@ -11,9 +11,6 @@ class ScannerBar extends StatefulWidget {
 }
 
 class _ScannerBarState extends State<ScannerBar> {
-  String ticket = '';
-  List<String> tickets = [];
-
   Future readQRCode() async {
     String reader = await FlutterBarcodeScanner.scanBarcode(
       "#FFFFFF",
@@ -21,13 +18,12 @@ class _ScannerBarState extends State<ScannerBar> {
       false,
       ScanMode.BARCODE,
     );
-    setState(() async {
-      await Flushbar(
-        title: 'Adcionado',
-        message: 'item Adicionado',
-        duration: const Duration(seconds: 2),
-      ).show(context);
-    });
+    await Flushbar(
+      title: 'Adcionado',
+      message: 'item Adicionado',
+      duration: const Duration(seconds: 2),
+    ).show(context);
+
     DatabaseHelper.instance.add(Scans(content: reader));
   }
 
@@ -40,14 +36,6 @@ class _ScannerBarState extends State<ScannerBar> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            //if (ticket != '')
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24.0),
-              child: Text(
-                'Ticket: ${tickets.length}',
-                style: const TextStyle(fontSize: 20),
-              ),
-            ),
             ElevatedButton.icon(
               onPressed: readQRCode,
               icon: const Icon(Icons.qr_code),

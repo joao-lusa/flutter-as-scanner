@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ScanHistory extends StatefulWidget {
   const ScanHistory({Key? key}) : super(key: key);
@@ -31,7 +33,10 @@ class ScanHistoryState extends State<ScanHistory> {
                       children: snapshot.data!.map((scans) {
                         return Center(
                           child: ListTile(
-                              title: Text(scans.content),
+                              title: Linkify(
+                                onOpen: _onOpen,
+                                text: scans.content,
+                              ),
                               trailing: ElevatedButton.icon(
                                 onPressed: () async {
                                   setState(() {
@@ -40,7 +45,7 @@ class ScanHistoryState extends State<ScanHistory> {
                                   await Flushbar(
                                     title: 'Excluir',
                                     message: 'item removido',
-                                    duration: Duration(seconds: 2),
+                                    duration: const Duration(seconds: 2),
                                   ).show(context);
                                 },
                                 icon: const Icon(Icons.delete_forever),
@@ -52,6 +57,14 @@ class ScanHistoryState extends State<ScanHistory> {
             }),
       ),
     );
+  }
+
+  Future<void> _onOpen(LinkableElement link) async {
+    if (await canLaunchUrlString(link.url)) {
+      await launchUrlString(link.url);
+    } else {
+      throw 'Could not launch $link';
+    }
   }
 }
 
