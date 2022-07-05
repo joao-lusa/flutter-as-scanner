@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
-
 class ScannerBar extends StatefulWidget {
   const ScannerBar({Key? key}) : super(key: key);
 
@@ -14,13 +13,19 @@ class _ScannerBarState extends State<ScannerBar> {
   List<String> tickets = [];
 
   readQRCode() async {
-    String code = await FlutterBarcodeScanner.scanBarcode(
+    Stream<dynamic>? reader = FlutterBarcodeScanner.getBarcodeStreamReceiver(
       "#FFFFFF",
       "Cancelar",
       false,
-      ScanMode.QR,
+      ScanMode.BARCODE,
     );
-    setState(() => ticket = code != '-1' ? code : 'Não validado');
+    if (reader != null)
+      reader.listen((code) {
+        setState(() {
+          if (!tickets.contains(code.toString()) && code != '-1')
+            tickets.add(code.toString());
+        });
+      });
   }
 
   @override
@@ -32,14 +37,14 @@ class _ScannerBarState extends State<ScannerBar> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (ticket != '')
-              Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Text(
-                  'Ticket: $ticket',
-                  style: const TextStyle(fontSize: 20),
-                ),
+            //if (ticket != '')
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: Text(
+                'Ticket: ${tickets.length}',
+                style: const TextStyle(fontSize: 20),
               ),
+            ),
             ElevatedButton.icon(
               onPressed: readQRCode,
               icon: const Icon(Icons.qr_code),
